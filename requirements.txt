@@ -1,0 +1,3 @@
+pmxt
+python-dotenv
+requests
