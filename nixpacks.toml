@@ -1,0 +1,9 @@
+# Nixpacks configuration for forcing Node.js + Python + pmxtjs
+[phases.setup]
+nixPkgs = ["python311", "nodejs", "gcc"]
+
+[phases.install]
+cmds = ["pip install -r requirements.txt", "npm install -g pmxtjs"]
+
+[start]
+cmd = "python pmxt_sdk_validation.py"
