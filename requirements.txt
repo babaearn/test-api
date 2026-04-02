@@ -1,3 +1,5 @@
-pmxt
-python-dotenv
+py-polymarket
+kalshi-python
 requests
+pandas
+python-dotenv

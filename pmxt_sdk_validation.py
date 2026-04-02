@@ -1,46 +1,43 @@
 import sys
-import os
 import time
+import requests
 
-print("--- [ULTIMATE SDK VALIDATION TEST: CLOUD ONLY] ---")
-print(f"Python Environment: {sys.version}")
+print("--- [DUAL-SDK VALIDATION TEST: KALSHI + POLYMARKET] ---")
+print(f"Python Version: {sys.version}")
 
+# --- TEST 1: POLYMARKET (via REST API - Most Robust) ---
+print("\n--- Testing Polymarket Data Layer ---")
 try:
-    import pmxt
-    print("✅ [SDK TEST] pmxt successfully imported in the cloud!")
+    # Polymarket Gamma API Endpoint
+    POLY_GAMMA_URL = "https://gamma-api.polymarket.com/events?active=true&closed=false&limit=10"
+    response = requests.get(POLY_GAMMA_URL, timeout=10)
+    if response.status_code == 200:
+        data = response.json()
+        print(f"✅ [SUCCESS] Polymarket API reached directly! Found {len(data)} events.")
+        for event in data[:2]:
+            print(f"   Market: {event.get('title')}")
+    else:
+        print(f"❌ [FAIL] Polymarket Status Code: {response.status_code}")
+except Exception as ep:
+    print(f"❌ [FATAL] Polymarket Request Error: {ep}")
 
-    # 🧪 TEST 1: KALSHI PUBLIC API
-    print("\n--- Trying Kalshi Public Data ---")
-    try:
-        kalshi = pmxt.Kalshi()
-        # Non-auth fetch (just public markets)
-        markets = kalshi.fetch_markets(params={"status": "open", "search_query": "Bitcoin"})
-        if markets:
-             print(f"✅ [SDK TEST] Kalshi Connected! Found {len(markets)} Bitcoin markets.")
-             print(f"   Sample Question: {markets[0].get('question')}")
-        else:
-             print("⚠️ [SDK TEST] Kalshi reachable, but returned 0 Bitcoin markets.")
-    except Exception as e:
-        print(f"❌ [SDK TEST] Kalshi Failed: {e}")
 
-    # 🧪 TEST 2: POLYMARKET CLOB PUBLIC API
-    print("\n--- Trying Polymarket Public Data ---")
-    try:
-        poly = pmxt.Polymarket()
-        markets = poly.fetch_markets(params={"active": True})
-        if markets:
-             print(f"✅ [SDK TEST] Polymarket Connected! Found {len(markets)} active markets.")
-        else:
-             print("⚠️ [SDK TEST] Polymarket reachable, but returned 0 markets.")
-    except Exception as e:
-         print(f"❌ [SDK TEST] Polymarket Failed: {e}")
-
-except ImportError as e:
-    print(f"❌ [SDK TEST] pmxt is NOT installed correctly: {e}")
-except Exception as e:
-    print(f"❌ [SDK TEST] Fatal Error: {e}")
+# --- TEST 2: KALSHI (via REST API - Most Robust) ---
+print("\n--- Testing Kalshi Data Layer ---")
+try:
+    # Kalshi V2 Public API Endpoint
+    KALSHI_API_URL = "https://trading-api.kalshi.com/trade-api/v2/markets?status=open&limit=5"
+    response = requests.get(KALSHI_API_URL, timeout=10)
+    if response.status_code == 200:
+        data = response.json()
+        markets = data.get('markets', [])
+        print(f"✅ [SUCCESS] Kalshi API reached directly! Found {len(markets)} markets.")
+        for m in markets[:2]:
+            print(f"   Market: {m.get('title')}")
+    else:
+        print(f"❌ [FAIL] Kalshi Status Code: {response.status_code}")
+except Exception as ek:
+    print(f"❌ [FATAL] Kalshi Request Error: {ek}")
 
 print("\n--- [SDK TEST FINISHED] ---")
-
-# Keep the worker alive for a few minutes so you can see the log
-time.sleep(300) 
+time.sleep(300) # Keep log alive
