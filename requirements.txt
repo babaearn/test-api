@@ -1,4 +1,4 @@
-py-polymarket
+https://github.com/v0-tech/py-polymarket/archive/refs/heads/main.zip
 kalshi-python
 requests
 pandas
