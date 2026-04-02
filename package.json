@@ -1,0 +1,12 @@
+{
+  "name": "test-api",
+  "version": "1.0.0",
+  "description": "Cross-language bridge for pmxt SDK validation",
+  "main": "pmxt_sdk_validation.py",
+  "dependencies": {
+    "pmxtjs": "latest"
+  },
+  "scripts": {
+    "start": "python pmxt_sdk_validation.py"
+  }
+}
